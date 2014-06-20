@@ -1,5 +1,5 @@
 Dsmi (http://dsmidiwifi.tobw.net/) server with the gui removed.  Still dependent on qt4 or qt5.
 
-Building:
-qmake dsmidiwifi-cli.pro
+Compiling:
+qmake
 make
