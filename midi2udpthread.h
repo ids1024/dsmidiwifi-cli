@@ -1,8 +1,6 @@
 #ifndef _MIDI2UDPTHREAD_
 #define _MIDI2UDPTHREAD_
 
-#include <QtNetwork>
-
 #include <set>
 #include <string>
 

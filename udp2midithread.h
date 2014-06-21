@@ -1,8 +1,6 @@
 #ifndef _UDP2MIDITHREAD_
 #define _UDP2MIDITHREAD_
 
-#include <QtNetwork>
-
 #include <alsa/asoundlib.h>
 
 #include "settings.h"

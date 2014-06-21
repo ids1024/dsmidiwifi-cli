@@ -42,10 +42,10 @@ void add_ip(string ip)
 
 void * midi2udpthread_run(void *)
 {
-	QUdpSocket *udpSocket;
-	udpSocket = new QUdpSocket(0);
+	int udp_socket;
+	udp_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	
-	forever {
+	while(1) {
 		if (poll(pfd, npfd, 250) > 0) {
 			
 			printf("midi2udp: got midi event!\n");
@@ -61,9 +61,13 @@ void * midi2udpthread_run(void *)
 				// Send it over UDP
 				for(set<string>::iterator ip_it = ds_ips.begin(); ip_it != ds_ips.end(); ++ip_it)
 				{
-					QString to_((*ip_it).c_str());
-					QHostAddress to(to_);
-					udpSocket->writeDatagram((char*)midi2udp_midimsg, MIDI_MESSAGE_LENGTH, to, DS_PORT);
+					//QString to_((*ip_it).c_str());
+					//QHostAddress to(to_);
+					//udpSocket->writeDatagram((char*)midi2udp_midimsg, MIDI_MESSAGE_LENGTH, to, DS_PORT);
+					int to_;
+					struct sockaddr_in to_addr;
+					inet_pton(AF_INET, (*ip_it).c_str(), &to_);
+					sendto(udp_socket, (char*)midi2udp_midimsg, MIDI_MESSAGE_LENGTH,0 , (struct sockaddr *)&to_addr, sizeof(to_addr));
 				}
 			}
 			
