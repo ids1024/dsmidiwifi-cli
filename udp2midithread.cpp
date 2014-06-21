@@ -13,16 +13,6 @@ snd_seq_event_t *udp2midi_midi_event;
 bool udp2midi_initSeq();
 void udp2midi_freeSeq();
 
-
-//Udp2MidiThread::~Udp2MidiThread()
-//{
-//	mutex.lock();
-//	abort = true;
-//	mutex.unlock();
-//	wait();
-//	freeSeq();
-//}
-
 bool udp2midi_init()
 {
 	// Initialize midi port
@@ -30,11 +20,6 @@ bool udp2midi_init()
 	if(res == false) {
 		return false;
 	}
-	
-	// run thread
-	//if(!isRunning()) {
-	//	start(LowPriority);
-	//}
 	
 	return true;
 }
@@ -51,13 +36,6 @@ void * udp2midithread_run(void *)
 	}
 	
 	forever {
-		
-//		if (abort) {
-//			delete udpSocket;
-			
-//			return;
-//		}
-		
 		if( udpSocket->waitForReadyRead(250) == true ) {
 			
 			// Receive from UDP

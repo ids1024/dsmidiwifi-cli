@@ -19,15 +19,6 @@ bool midi2udp_initSeq();
 void midi2udp_freeSeq();
 
 
-//Midi2UdpThread::~Midi2UdpThread()
-//{
-//	mutex.lock();
-//	abort = true;
-//	mutex.unlock();
-//	wait();
-//	freeSeq();
-//}
-	
 bool midi2udp_init()
 {
 	// Initialize midi port
@@ -40,11 +31,6 @@ bool midi2udp_init()
 	npfd = snd_seq_poll_descriptors_count(midi2udp_seq_handle, POLLIN);
 	pfd = (struct pollfd *)malloc(npfd * sizeof(struct pollfd));
 	snd_seq_poll_descriptors(midi2udp_seq_handle, pfd, npfd, POLLIN);
-	
-	// run thread
-//	if(!isRunning()) {
-//		start(LowPriority);
-//	}
 	
 	return true;
 }
@@ -60,13 +46,6 @@ void * midi2udpthread_run(void *)
 	udpSocket = new QUdpSocket(0);
 	
 	forever {
-		
-//		if (abort) {
-//			delete udpSocket;
-			
-//			return;
-//		}
-		
 		if (poll(pfd, npfd, 250) > 0) {
 			
 			printf("midi2udp: got midi event!\n");

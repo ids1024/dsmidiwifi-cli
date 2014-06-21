@@ -12,9 +12,6 @@ int main(int argc, char *argv[])
 	pthread_t midi2udpthread;
 	pthread_t udp2midithread;
 
-	//midi2udpthread = 0;
-	//udp2midithread = 0;
-	
 	bool res = midi2udp_init();
 	pthread_create(&midi2udpthread, NULL, midi2udpthread_run, NULL);
 	if(res == true) {
@@ -22,8 +19,6 @@ int main(int argc, char *argv[])
 	} else {
 		fprintf(stderr, "Error initializing midi2udp!");
 		exit(1);
-		//delete midi2udpthread;
-		//midi2udpthread = 0;
 	}
 	
 	res = udp2midi_init();
@@ -33,8 +28,6 @@ int main(int argc, char *argv[])
 	} else {
 		fprintf(stderr, "Error initializing udp2midi!");
 		exit(1);
-		///delete udp2midithread;
-		//udp2midithread = 0;
 	}
 
 	return app.exec();
