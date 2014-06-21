@@ -1,15 +1,15 @@
 include config.mk
 
 SRC = dswifimidi.cpp midi2udpthread.cpp udp2midithread.cpp
-OBJ = ${SRC:.c=.o}
+OBJ = ${SRC:.cpp=.o}
 
 all: dsmidiwifi-cli
 
 ${OBJ}: config.mk
 
 dsmidiwifi-cli: ${OBJ}
-	@echo CC -o $@
-	@${CXX} -o $@ ${OBJ} ${CXXFLAGS} $(INCPATH) ${LDFLAGS}
+	@echo CXX -o $@
+	@${CXX} -o $@ ${OBJ} ${LDFLAGS}
 
 clean:
 	@echo cleaning
