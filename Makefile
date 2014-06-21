@@ -1,7 +1,7 @@
 include config.mk
 
-SRC = dsmidiwifi-cli.cpp midi2udpthread.cpp udp2midithread.cpp
-OBJ = ${SRC:.cpp=.o}
+SRC = dsmidiwifi-cli.c midi2udpthread.c udp2midithread.c
+OBJ = ${SRC:.c=.o}
 
 all: dsmidiwifi-cli
 

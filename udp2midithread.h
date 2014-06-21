@@ -5,9 +5,9 @@
 
 #include "settings.h"
 
-bool udp2midi_init();
+int udp2midi_init();
 		
-void * udp2midithread_run(void *);
+void * udp2midithread_run();
 		
 
 #endif
