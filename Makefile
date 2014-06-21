@@ -13,7 +13,7 @@ dsmidiwifi-cli: ${OBJ}
 
 clean:
 	@echo cleaning
-	@rm -f dsmidiwifi ${OBJ}
+	@rm -f dsmidiwifi-cli ${OBJ}
 
 
 install: all
