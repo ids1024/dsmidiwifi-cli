@@ -1,9 +1,3 @@
-PREFIX = /usr/local
+PREFIX = /usr/
 
-CXXFLAGS+= -fPIE
-INCPATH +=
 LDFLAGS += -lasound -lpthread
-
-#CC = cc
-#CC = musl-gcc
-#CC = clang
