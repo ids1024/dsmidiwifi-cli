@@ -1,3 +1,2 @@
 Remove qt dependency
 Port to c
-Split midi2udpthread and udp2midithread into two servers?
