@@ -6,7 +6,7 @@
 
 // Midi stuff
 unsigned char udp2midi_midimsg[MIDI_MESSAGE_LENGTH];
-snd_seq_t *udp2midi_seq_handle;
+extern snd_seq_t *seq_handle;
 int midi_out_port;
 snd_midi_event_t *udp2midi_eventparser;
 snd_seq_event_t *udp2midi_midi_event;
@@ -82,7 +82,7 @@ void * udp2midithread_run() {
 			snd_seq_ev_set_direct(udp2midi_midi_event);
 			snd_seq_ev_set_source(udp2midi_midi_event, midi_out_port);
 				
-			snd_seq_event_output_direct(udp2midi_seq_handle, udp2midi_midi_event);
+			snd_seq_event_output_direct(seq_handle, udp2midi_midi_event);
 			
 			snd_seq_free_event(udp2midi_midi_event);
 		}
@@ -90,30 +90,22 @@ void * udp2midithread_run() {
 }
 
 int udp2midi_initSeq() {
-	char portname[64] = "DSMIDIWIFI UDP2MIDI OUT";
+	char portname[64] = "out";
 
-	if (snd_seq_open(&udp2midi_seq_handle, "default", SND_SEQ_OPEN_OUTPUT, 0) < 0) {
-    	printf("udp2midi: Error opening ALSA sequencer.\n");
-    	return 1;
-  	}
-	
-	snd_seq_set_client_name(udp2midi_seq_handle, "DSMIDIWIFI UDP2MIDI");
-	
-	
-	midi_out_port = snd_seq_create_simple_port(udp2midi_seq_handle, portname, SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
+	midi_out_port = snd_seq_create_simple_port(seq_handle, portname, SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
 	SND_SEQ_PORT_TYPE_APPLICATION);
 	
 	if (midi_out_port < 0) {
 		printf("udp2midi: Error creating MIDI port!\n");
 		
-		snd_seq_close(udp2midi_seq_handle);
+		snd_seq_close(seq_handle);
 		return 1;
 	}
 	
 	if (snd_midi_event_new(MIDI_MESSAGE_LENGTH, &udp2midi_eventparser) != 0) {
 		printf("udp2midi: Error making midi event parser!\n");
 		
-		snd_seq_close(udp2midi_seq_handle);
+		snd_seq_close(seq_handle);
 		return 1;
 	}
 	snd_midi_event_init(udp2midi_eventparser);
@@ -121,10 +113,4 @@ int udp2midi_initSeq() {
 	udp2midi_midi_event = (snd_seq_event_t*)malloc(sizeof(snd_seq_event_t));
 	
 	return 0;
-}
-
-void udp2midi_freeSeq() {
-	if ( snd_seq_close(udp2midi_seq_handle) < 0 ) {
-		printf("udp2midi: Error closing socket!\n");
-	}
 }
