@@ -6,7 +6,7 @@
 // Midi stuff
 unsigned char midi2udp_midimsg[MIDI_MESSAGE_LENGTH];
 extern snd_seq_t *seq_handle;
-int midi_in_port;
+extern int midi_in_port;
 snd_midi_event_t *mid2udp_eventparser;
 snd_seq_event_t *midi2udp_midi_event;
 
@@ -21,15 +21,17 @@ struct ds_ips {
 struct ds_ips *ds_ips_first;
 
 
-int midi2udp_initSeq();	
-void midi2udp_freeSeq();
-
-
 int midi2udp_init() {
-	// Initialize midi port
-	if (midi2udp_initSeq() == 1) {
+	if (snd_midi_event_new(MIDI_MESSAGE_LENGTH, &mid2udp_eventparser) != 0) {
+		printf("midi2udp: Error making midi event parser!\n");
+		
+		snd_seq_close(seq_handle);
 		return 1;
 	}
+	snd_midi_event_init(mid2udp_eventparser);
+	
+	midi2udp_midi_event = (snd_seq_event_t*)malloc(sizeof(snd_seq_event_t));
+
 	
 	// start expecing MIDI events
 	npfd = snd_seq_poll_descriptors_count(seq_handle, POLLIN);
@@ -94,28 +96,4 @@ void * midi2udpthread_run() {
 			snd_midi_event_reset_decode(mid2udp_eventparser);
 		}
 	}
-}
-
-int midi2udp_initSeq() {
-	midi_in_port = snd_seq_create_simple_port(seq_handle, "in", SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
-        SND_SEQ_PORT_TYPE_APPLICATION);
-	
-	if (midi_in_port < 0) {
-		printf("midi2udp: Error creating MIDI port!\n");
-		
-		snd_seq_close(seq_handle);
-		return 1;
-	}
-	
-	if (snd_midi_event_new(MIDI_MESSAGE_LENGTH, &mid2udp_eventparser) != 0) {
-		printf("midi2udp: Error making midi event parser!\n");
-		
-		snd_seq_close(seq_handle);
-		return 1;
-	}
-	snd_midi_event_init(mid2udp_eventparser);
-	
-	midi2udp_midi_event = (snd_seq_event_t*)malloc(sizeof(snd_seq_event_t));
-	
-	return 0;
 }
