@@ -97,9 +97,7 @@ void * midi2udpthread_run() {
 }
 
 int midi2udp_initSeq() {
-	char portname[64] = "in";
-
-	midi_in_port = snd_seq_create_simple_port(seq_handle, portname, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
+	midi_in_port = snd_seq_create_simple_port(seq_handle, "in", SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
         SND_SEQ_PORT_TYPE_APPLICATION);
 	
 	if (midi_in_port < 0) {

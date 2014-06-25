@@ -90,9 +90,7 @@ void * udp2midithread_run() {
 }
 
 int udp2midi_initSeq() {
-	char portname[64] = "out";
-
-	midi_out_port = snd_seq_create_simple_port(seq_handle, portname, SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
+	midi_out_port = snd_seq_create_simple_port(seq_handle, "out", SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ,
 	SND_SEQ_PORT_TYPE_APPLICATION);
 	
 	if (midi_out_port < 0) {
