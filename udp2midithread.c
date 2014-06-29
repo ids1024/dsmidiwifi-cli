@@ -2,7 +2,15 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <jack/jack.h>
+
 #include "midi2udpthread.h"
+
+extern int jack;
+extern jack_port_t *output_port;
+extern jack_client_t *jack_client;
+extern jack_nframes_t nframes;
+extern unsigned char output_midimsg[MIDI_MESSAGE_LENGTH];
 
 // Midi stuff
 unsigned char udp2midi_midimsg[MIDI_MESSAGE_LENGTH];
@@ -13,16 +21,17 @@ snd_seq_event_t *udp2midi_midi_event;
 
 
 int udp2midi_init() {
-	
-	if (snd_midi_event_new(MIDI_MESSAGE_LENGTH, &udp2midi_eventparser) != 0) {
-		printf("udp2midi: Error making midi event parser!\n");
+	if (!jack) {
+		if (snd_midi_event_new(MIDI_MESSAGE_LENGTH, &udp2midi_eventparser) != 0) {
+			printf("udp2midi: Error making midi event parser!\n");
 		
-		snd_seq_close(seq_handle);
-		return 1;
-	}
-	snd_midi_event_init(udp2midi_eventparser);
+			snd_seq_close(seq_handle);
+			return 1;
+		}
+		snd_midi_event_init(udp2midi_eventparser);
 	
-	udp2midi_midi_event = (snd_seq_event_t*)malloc(sizeof(snd_seq_event_t));
+		udp2midi_midi_event = (snd_seq_event_t*)malloc(sizeof(snd_seq_event_t));
+	}
 	
 	return 0;
 }
@@ -69,25 +78,33 @@ void * udp2midithread_run() {
 			// Send to MIDI
 			printf("udp2midi: Sending event: 0x%x 0x%x 0x%x\n", udp2midi_midimsg[0], udp2midi_midimsg[1], udp2midi_midimsg[2]);
 	
-			if ( snd_midi_event_encode(udp2midi_eventparser, udp2midi_midimsg, MIDI_MESSAGE_LENGTH, udp2midi_midi_event) < 0) {
-				printf("Error encoding midi event!\n");
+			if (jack) {
+				output_midimsg[0] = udp2midi_midimsg[0];
+				output_midimsg[1] = udp2midi_midimsg[1];
+				output_midimsg[2] = udp2midi_midimsg[2];
 			}
+
+			else {
+				if ( snd_midi_event_encode(udp2midi_eventparser, udp2midi_midimsg, MIDI_MESSAGE_LENGTH, udp2midi_midi_event) < 0) {
+					printf("Error encoding midi event!\n");
+				}
 			
-			snd_midi_event_reset_encode(udp2midi_eventparser);
+				snd_midi_event_reset_encode(udp2midi_eventparser);
 			
-			if (udp2midi_midi_event->type == SND_SEQ_EVENT_NOTEON) {
-				printf("udp2midi: Note on: %d, channel %d\n", udp2midi_midi_event->data.note.note, udp2midi_midi_event->data.control.channel);
-			} else if (udp2midi_midi_event->type == SND_SEQ_EVENT_NOTEOFF){
-				printf("udp2midi: Note off: %d, channel %d\n", udp2midi_midi_event->data.note.note, udp2midi_midi_event->data.control.channel);
+				if (udp2midi_midi_event->type == SND_SEQ_EVENT_NOTEON) {
+					printf("udp2midi: Note on: %d, channel %d\n", udp2midi_midi_event->data.note.note, udp2midi_midi_event->data.control.channel);
+				} else if (udp2midi_midi_event->type == SND_SEQ_EVENT_NOTEOFF){
+					printf("udp2midi: Note off: %d, channel %d\n", udp2midi_midi_event->data.note.note, udp2midi_midi_event->data.control.channel);
+				}
+				
+				snd_seq_ev_set_subs(udp2midi_midi_event);
+				snd_seq_ev_set_direct(udp2midi_midi_event);
+				snd_seq_ev_set_source(udp2midi_midi_event, midi_out_port);
+				
+				snd_seq_event_output_direct(seq_handle, udp2midi_midi_event);
+			
+				snd_seq_free_event(udp2midi_midi_event);
 			}
-				
-			snd_seq_ev_set_subs(udp2midi_midi_event);
-			snd_seq_ev_set_direct(udp2midi_midi_event);
-			snd_seq_ev_set_source(udp2midi_midi_event, midi_out_port);
-				
-			snd_seq_event_output_direct(seq_handle, udp2midi_midi_event);
-			
-			snd_seq_free_event(udp2midi_midi_event);
 		}
 	}
 }

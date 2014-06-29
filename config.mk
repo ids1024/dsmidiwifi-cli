@@ -1,3 +1,3 @@
 PREFIX = /usr/
 
-LDFLAGS += -lasound -lpthread
+LDFLAGS += -lasound -lpthread -ljack
