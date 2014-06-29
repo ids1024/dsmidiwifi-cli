@@ -1,4 +1,5 @@
 Dsmi (http://dsmidiwifi.tobw.net/) server with the gui and qt dependence removed.
+This branch has jack support, enabled with -j or --jack.  Midi2udp is disabled - I have no use for it and nothing to test it with.
 
 Compiling:
 make
