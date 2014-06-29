@@ -1,3 +1,3 @@
 PREFIX = /usr/
 
-LDFLAGS += -lasound -ljack
+LDFLAGS += -ljack
