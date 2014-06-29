@@ -3,7 +3,6 @@
 
 #include <jack/jack.h>
 
-#include "midi2udpthread.h"
 #include "udp2midithread.h"
 
 snd_seq_t *seq_handle;

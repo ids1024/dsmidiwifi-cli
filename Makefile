@@ -1,6 +1,6 @@
 include config.mk
 
-SRC = dsmidiwifi-cli.c midi2udpthread.c udp2midithread.c
+SRC = dsmidiwifi-cli.c udp2midithread.c
 OBJ = ${SRC:.c=.o}
 
 all: dsmidiwifi-cli

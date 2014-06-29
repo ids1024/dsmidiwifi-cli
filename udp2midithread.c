@@ -2,9 +2,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <alsa/asoundlib.h>
 #include <jack/jack.h>
 
-#include "midi2udpthread.h"
+#include "settings.h"
 
 extern int jack;
 extern jack_port_t *output_port;
@@ -71,7 +72,6 @@ void * udp2midithread_run() {
 			char from_ip[INET_ADDRSTRLEN];
 			inet_ntop(AF_INET, &from_address.sin_addr, from_ip, INET_ADDRSTRLEN);
 			printf("Keepalive from: %s\n", from_ip);
-			add_ip(from_ip);
 		
 		} else {
 
